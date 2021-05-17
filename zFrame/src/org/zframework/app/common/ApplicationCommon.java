@@ -18,7 +18,7 @@ import org.zframework.web.entity.type.IPRoleType;
  */
 public class ApplicationCommon {
 	/**
-	 * 项目basepath
+	 * 项目BasePath
 	 */
 	public static String BASEPATH = "";
 	/**
