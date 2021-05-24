@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/admin/desktop")
 public class HomeController {
 	@RequestMapping(method={RequestMethod.GET})
-	public void index(){
-		System.out.println("进入桌面应用");
+	public String index(){
+		return "desktop/index";
 	}
 }

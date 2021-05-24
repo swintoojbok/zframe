@@ -45,7 +45,7 @@ function Windows(id){
 			}
 		}
 		//默认窗口关闭事件
-		this.onClose = function(){
+		this.onPreClose = function(){
 			if(Windows.UploadFileWindow != null && typeof(Windows.UploadFileWindow.callback) == "function"){
 				Windows.UploadFileWindow.callback();
 			}
@@ -57,6 +57,7 @@ function Windows(id){
 		}
 		//关闭窗口
 		this.close = function(){
+			this.onPreClose();
 			this.windows('close');
 		}
 		//打开窗口
@@ -142,9 +143,6 @@ function windows_proxy(a,b){
 						};
 					a.tools.push(tool);
 				}
-			}
-			if(!a.onClose){
-				a.onClose = win.onClose;
 			}
 		}
 		if(top.$("#"+this.id)[0]==undefined){

@@ -9,9 +9,12 @@ var KeyBoard = {
 		singleSelect:true,//单行选中
 		Ctrl:false,//开启Ctrl键监听
 		Shift:false,//开启Shift键监听
-		Init:initKeyBoardEvent//初始化方法，必须调用
+		isClose:false,//监听开关，为true时不启用监听事件
+		Init:initKeyBoardEvent,//初始化方法，必须调用
+		Dispose:disposeKeyBoard//关闭键盘监听
 }
 function initKeyBoardEvent(){
+	KeyBoard.isClose = false;
 	if(!KeyBoard.Ctrl && !KeyBoard.Shift)
 		return;
 	if(!KeyBoard.GridName){
@@ -19,6 +22,8 @@ function initKeyBoardEvent(){
 		return ;
 	}
 	$(document).keydown(function(event){
+		if(KeyBoard.isClose)
+			return;
 		if(event.ctrlKey && KeyBoard.Ctrl && !KeyBoard.isPress){//按下Ctrl键
 			if(CtrlKeyEvent){
 				CtrlKeyEvent("down");
@@ -31,7 +36,10 @@ function initKeyBoardEvent(){
 			}
 		}else if(event.ctrlKey && event.keyCode === 65){
 			//alert("");
+		}else if(event.ctrlKey && event.keyCode === 70){//ctrl+F
+			
 		}
+		
 		
 	});
 	$(document).keyup(function(event){
@@ -61,6 +69,9 @@ function initKeyBoardEvent(){
 		}
 		KeyBoard.singleSelect = $("#"+KeyBoard.GridName).datagrid("options").singleSelect;
 	}
+}
+function disposeKeyBoard(){
+	KeyBoard.isClose = true;
 }
 //按下Ctrl键之后的回调函数
 function CtrlKeyEvent(eventType){

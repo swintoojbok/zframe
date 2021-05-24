@@ -22,9 +22,9 @@ function ContentMenuClickHandler(dataGridName,item) {
 		} else if (item.name == "edit") {
 			doEditForContentMenu(DataGridUtil.LastSelectRow.id);
 		} else if (item.name == "remove") {
-			datagridDelete($("#btnRemove").attr("deleteUrl"),dataGridName,DataGridUtil.LastSelectRow.id);
+			dataGridDelete($("#btnRemove").attr("deleteUrl"),dataGridName,DataGridUtil.LastSelectRow.id);
 		} else if (item.name == "removeSelected") {
-			datagridDelete($("#btnRemove").attr("deleteUrl"),dataGridName);
+			dataGridDelete($("#btnRemove").attr("deleteUrl"),dataGridName);
 		}else{
 			var param = new JSONObject();
 			param.put("gridName", dataGridName);
@@ -279,7 +279,7 @@ DataGridUtil.showHeadContextMenu = function(datagridName,e,win){
 }
 //初始化表格列的显示和隐藏
 DataGridUtil.initDataGridColumn = function(datagridName,win){
-	var savedConfig = getCookie($("#basePath").val()+"_"+datagridName + "_column_cookie");
+	var savedConfig = getCookie(top.Home.BasePath+"_"+datagridName + "_column_cookie");
 	var dg = null;
 	if(win){
 		dg = win.find("#"+datagridName);
@@ -304,7 +304,7 @@ DataGridUtil.initDataGridColumn = function(datagridName,win){
 }
 //保存配置到cookie
 DataGridUtil.saveDataGridColumnConfig = function(datagridName,win){
-	var savedConfig = getCookie($("#basePath").val()+"_"+datagridName + "_column_cookie");
+	var savedConfig = getCookie(top.Home.BasePath+"_"+datagridName + "_column_cookie");
 	var dg = null;
 	if(win){
 		dg = win.find("#"+datagridName);
@@ -323,7 +323,7 @@ DataGridUtil.saveDataGridColumnConfig = function(datagridName,win){
 		savedConfig = hideColumns.toString();
 	else
 		savedConfig = "isEmpty_3366";
-	setCookie($("#basePath").val()+"_"+datagridName + "_column_cookie", savedConfig, "365d");
+	setCookie(top.Home.BasePath+"_"+datagridName + "_column_cookie", savedConfig, "365d");
 }
 //导出Excel
 DataGridUtil.exportExcel = function(dg,entityName){

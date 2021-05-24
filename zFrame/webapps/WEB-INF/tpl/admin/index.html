@@ -5,6 +5,7 @@
 	<title>系统首页</title>
 	#style
 	<script type="text/javascript" src="$!basePath/framework/js/common/zframe.index.js"></script>
+	<script type="text/javascript" src="$!basePath/framework/js/common/zframe.cookie.js"></script>
 	<style type="text/css">
 		ul{list-style-type:none;margin:0px; padding:5px;}
 		ul li{ padding:0px;}
@@ -66,12 +67,18 @@
 		</div>
 		<input type="hidden" id="basePath" value="$!basePath"/>
 		<span style="padding-right:5px;">当前用户:<span style="font-weight: bold;">$!UserName</span></span>
+		<a id="btnToDesktop" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-home',plain:true" onclick="window.location.href='$!basePath/admin/desktop'">桌面版</a>
 		<a id="btnBackHome" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-home',plain:true" onclick="backHome()">返回桌面</a>
 		<a id="btnThemes" href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#themeList',iconCls:'icon-themes'">更换皮肤</a>  
 		<div id="themeList" style="width:90px;" data-options="onClick:changeThemes">
 		    <div data-options="iconCls:'icon-ok'" themeName="default">默认皮肤</div>  
 		    <div data-options="" themeName="blue">Blue</div>
 		    <div data-options="" themeName="cupertino">Cupertino</div>
+		    <div data-options="" themeName="metro-blue">Metro-Blue</div>
+		    <div data-options="" themeName="metro-gray">Metro-Bray</div>
+		    <div data-options="" themeName="metro-green">Metro-Green</div>
+		    <div data-options="" themeName="metro-orange">Metro-Orange</div>
+		    <div data-options="" themeName="metro-red">Metro-Red</div>
 		</div>
 		<a id="btnRemove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-exit',plain:true" onclick="exit()" style="margin-top:5px;">退出系统</a>
 	</div>
@@ -88,7 +95,7 @@
 				#end
 		</div>
 	</div>
-	<div data-options="region:'south',border:false" style="height:20px;background:#f7f7f7;text-align: center;">合肥信息技术服务有限公司 2012</div>
+	<div data-options="region:'south',border:false" style="height:20px;background:#f7f7f7;text-align: center;">Copyright 2012-2013</div>
 	<div id="centerDiv" data-options="region:'center',title:'首页',tools:'#tt',iconCls:'icon-home'" style="padding:0px;margin: 0px;">
 		<div id="divFrame" class="easyui-panel" data-options="border:false,fit:true">
 			<iframe id="frameContent" src="about:blank" frameborder="0" width="100%" scrolling="auto" marginheight="0" marginwidth="0" frameSpacing="0"></iframe>

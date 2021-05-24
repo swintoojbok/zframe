@@ -3,6 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>编辑用户</title>
+	
 </head>
   <body>
   <script type="text/javascript">
@@ -37,6 +38,7 @@
 			}); 
 			initWindows();
 			initToolbar();//初始化按钮
+			
   		});
   		function initWindows(){
   			winRoleList_edit.windows({
@@ -101,10 +103,9 @@
   			});
   		}
   		function userEdit_ok(){
-  			winUserEdit.find('#userForm').submit()
+  			winUserEdit.find('#userForm').submit();
   		}
   		function userEdit_cancel(){
-  		alert(winUserEdit.getReturnValue());
   			winUserEdit.close();
   		}
 	</script>

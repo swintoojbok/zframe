@@ -1,6 +1,18 @@
 var Home = {
 		BasePath:"",
 		BackHome:backHome,//返回桌面
+		BackLastNav:function(){//返回上次打开的导航菜单
+			//读取上次打开导航菜单
+			var oUrl = getCookie(top.Home.BasePath+"_FrameUrl");
+			var oIcon = getCookie(top.Home.BasePath+"_FrameIcon");
+			var oTitle = "";
+			$.each($("#navMenu").find("li"),function(i,li){
+				if($(li).find("a[src]").attr("src") == oUrl){
+					oTitle = $(li).find("a[src]").text();
+				}
+			});
+			Navigate(oUrl,oTitle,oIcon);
+		},
 		InitFrameHeight:autoHeight,//自动计算高度
 		InitNavMenu:function(){//初始化导航菜单
 			$("#navMenu").find("li").click(function(){
@@ -18,13 +30,13 @@ var Home = {
 				});
 				$(this)[0].className = "nav-selected";
 				Navigate(a.attr("src"), a.text(),a.attr("class"));
-			})
+			});
 		},
 		Navigate:Navigate,//导航
 		InitThemes:initThemes,//初始化皮肤
 		InitKeyboardEvent:initKeyboardEvent,//初始化键盘事件
 		Exit:exit,//退出系统
-		FrameReload:reload//重新加载iframe
+		FrameReload:reload,//重新加载iframe
 };
 var Frame = {
 	FrameHeight:0,
@@ -57,8 +69,12 @@ $(document).ready(function(){
 	}
 	//初始化导航菜单
 	top.Home.InitNavMenu();
-	//显示桌面
-	top.Home.BackHome();
+	if(Config.Home.RememberLastNav){
+		top.Home.BackLastNav();
+	}else{
+		//显示桌面
+		top.Home.BackHome();
+	}
 	//初始化选中的皮肤
 	top.Home.InitThemes();
 	//初始化键盘事件
@@ -92,6 +108,7 @@ function autoHeight() {
 }
 function Navigate(oUrl,oTitle,oIcon,tag) {
 	if (oUrl != $("#frameContent").attr("src") || tag==1) {
+		//设置样式
 		$("#centerDiv").panel("header").find(".panel-icon").attr("class","panel-icon "+oIcon);
 		$("#centerDiv").panel("setTitle",oTitle);
 		$("#frameContent").attr("src", oUrl);
@@ -99,7 +116,20 @@ function Navigate(oUrl,oTitle,oIcon,tag) {
 		top.Frame.FrameTitle = oTitle;
 		top.Frame.FrameUrl = oUrl;
 		top.Frame.FrameIcon = oIcon;
-		
+		$.each($("#navMenu").find("li"),function(i,li){
+			if($(li).find("a[src]").attr("src") == oUrl){
+				$(li).find("a[src]").css("fontWeight","blod");
+				$(li).find("a[src]").css("color","#FFFFFF");
+				li.className = "nav-selected"
+			}else{
+				$(li).find("a[src]").css("fontWeight","normal");
+				$(li).find("a[src]").css("color","#333");
+				li.className = "nav-default";
+			}
+		});
+		//存入cookie
+		setCookie(top.Home.BasePath+"_FrameUrl", oUrl);
+		setCookie(top.Home.BasePath+"_FrameIcon", oIcon);
 		//清理打开过的窗口
 		var windows = $("#FrameWorkWindows").find("input");
 		for(var i=0;i<windows.length;i++){

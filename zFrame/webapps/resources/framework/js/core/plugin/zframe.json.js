@@ -47,6 +47,8 @@ function JSONObject(){
     //获取指定KEY的元素值VALUE，失败返回NULL
      this.get = function(_key) {
          try {
+        	 if(this.isEmpty())
+        		 return null;
              for (i = 0; i < this.elements.length; i++) {
                  if (this.elements[i].key == _key) {
                      return this.elements[i].value;
