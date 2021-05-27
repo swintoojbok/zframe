@@ -1,6 +1,8 @@
 package org.zframework.core.filter;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,14 +40,27 @@ public class URLInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
 			Object object) throws Exception {
 		String requestUrl = request.getRequestURI().replace(request.getRequestURI().substring(0, request.getRequestURI().indexOf(request.getContextPath())+request.getContextPath().length()), "");
+		List<String> execUrl = new ArrayList<String>();
+		//访问控制例外的连接
+		execUrl.add("/admin/login");
+		execUrl.add("/admin/index");
+		execUrl.add("/admin/error");
+		execUrl.add("/admin/desktop");
+		execUrl.add("/admin/exportExcel");
 		if(requestUrl.startsWith("/admin")){
-			if(!requestUrl.startsWith("/admin/login") && !requestUrl.startsWith("/admin/index") && !requestUrl.startsWith("/admin/error")){
+			if(!ifInExecRes(execUrl,requestUrl)){
 				//判断用户是否有访问这个连接的权限
 				User currentUser = (User) request.getSession().getAttribute(ApplicationCommon.SESSION_ADMIN);
-				boolean allowAccess = false;
+				boolean allowAccess = false;//是否有访问权限
+				boolean ifDisabled = false;//是否禁用
+				String resName = "";
 				for(Resource res : currentUser.getResources()){
-					if(requestUrl.startsWith(res.getUrl())){
+					if(requestUrl.startsWith(res.getUrl()) && !res.getUrl().equals("/admin")){
 						allowAccess = true;
+						if(res.getEnabled() == 1){
+							ifDisabled = true;
+							resName = res.getName();
+						}
 						break;
 					}
 				}
@@ -64,10 +79,41 @@ public class URLInterceptor implements HandlerInterceptor {
 						out.close();
 					}
 					return false;
+				}else if(ifDisabled){
+					/*if(ObjectUtil.isNull(request.getHeader("x-requested-with")))
+					{
+						response.sendRedirect(request.getContextPath()+"/admin/error/e/"+ControllerCommon.RES_DISABLED);
+					}
+					else if(HttpServletUtil.isAjaxWithRequest(request))
+					{*/
+						response.setContentType("text/html");
+						PrintWriter out = response.getWriter();
+						out.println("<script type=\"text/javascript\">");
+						out.println("top.Dialog.alert(\"【"+resName+"】已停止使用!\");");
+						out.println("</script>");
+						out.close();
+					//}
+					return false;
 				}
 			}
 		}
 		return true;
+	}
+	/**
+	 * 判断请求的连接是否在访问控制连接的例外情况之内
+	 * @param resUrls
+	 * @param reqUrl
+	 * @return
+	 */
+	private boolean ifInExecRes(List<String> resUrls,String reqUrl){
+		boolean result = false;
+		for(String url : resUrls){
+			if(reqUrl.startsWith(url)){
+				result = true;
+				break;
+			}
+		}
+		return result;
 	}
 	/**
 	 * 在业务处理器处理完成之后执行

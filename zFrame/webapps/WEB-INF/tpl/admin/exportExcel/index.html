@@ -69,10 +69,17 @@
 		}
 		//导出的文件名
 		var exportName = winExportExcel.find("#exportName").val();
+		//是否打包
+		var ifCompress = winExportExcel.find("#ifCompress").attr("checked");
+		if(ifCompress){
+			ifCompress = true;
+		}else{
+			ifCompress = false;
+		}
   		//判断导出类型
 		if(exportType == "all"){//如果是导出全部
 			top.Dialog.progress();
-			$.post("$!basePath/admin/exportExcel/doExportExcelAll",{"entityClass":entityClass,"columns":exportColumns.toString(),"titles":exportColumnTitles.toString(),"fileName":exportName},function(data){
+			$.post("$!basePath/admin/exportExcel/doExportExcelAll",{"entityClass":entityClass,"columns":exportColumns.toString(),"titles":exportColumnTitles.toString(),"fileName":exportName,"ifCompress":ifCompress},function(data){
 				export_excel_callback(data);
 				top.Dialog.progress("close");
 			},"json");
@@ -80,7 +87,7 @@
 			top.Dialog.progress();
 			var pageNo = winExportExcelParam.pager[0].pageNo;
 			var pageSize = winExportExcelParam.pager[0].pageSize;
-			$.post("$!basePath/admin/exportExcel/doExportExcelPage",{"entityClass":entityClass,"columns":exportColumns.toString(),"titles":exportColumnTitles.toString(),"fileName":exportName,"pageNo":pageNo,"pageSize":pageSize},function(data){
+			$.post("$!basePath/admin/exportExcel/doExportExcelPage",{"entityClass":entityClass,"columns":exportColumns.toString(),"titles":exportColumnTitles.toString(),"fileName":exportName,"ifCompress":ifCompress,"pageNo":pageNo,"pageSize":pageSize},function(data){
 				export_excel_callback(data);
 				top.Dialog.progress("close");
 			},"json");
@@ -88,7 +95,7 @@
 			var selectedIds = winExportExcelParam.selectedIds;
 			if(selectedIds){
 				top.Dialog.progress();
-				$.post("$!basePath/admin/exportExcel/doExportExcelSelected",{"entityClass":entityClass,"columns":exportColumns.toString(),"titles":exportColumnTitles.toString(),"fileName":exportName,"ids":selectedIds},function(data){
+				$.post("$!basePath/admin/exportExcel/doExportExcelSelected",{"entityClass":entityClass,"columns":exportColumns.toString(),"titles":exportColumnTitles.toString(),"fileName":exportName,"ifCompress":ifCompress,"ids":selectedIds},function(data){
 					export_excel_callback(data);
 					top.Dialog.progress("close");
 				},"json");
@@ -100,6 +107,7 @@
   	function export_excel_callback(data){
   		if(data.isExported){
 			winExportExcel.find("#excelFileName").val(data.fileName);
+			winExportExcel.find("#excelIfCompress").val(data.ifCompress);
 			winExportExcel.find("#downExcelForm").submit();
 			top.Notiy.success("导出成功!");
 			winExportExcel.close();
@@ -125,7 +133,8 @@
 		 				<option value="all" selected="selected">导出全部</option>
 		 				<option value="page">导出当前页</option>
 		 				<option value="selected">导出选中</option>
-		 			</select>
+		 			</select>&nbsp;
+		 			<input type="checkbox" id="ifCompress" style="vertical-align: middle;"/>打包
 	 			</td>
 	 		</tr>
 	 		<tr style="display:none;">
@@ -155,6 +164,7 @@
 	 	</table>
 	 	<form id="downExcelForm" action="$!basePath/admin/exportExcel/download" method="post">
 	 		<input type="hidden" name="fileName" id="excelFileName"/>
+	 		<input type="hidden" name="ifCompress" id="excelIfCompress"/>
 	 	</form>
 	 </div>
 	 <!--Change Button Text-->

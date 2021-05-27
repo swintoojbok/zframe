@@ -128,7 +128,7 @@ function treeGridDelete(url,gridName,id){
 					if(r){
 						$("#btnRemove").linkbutton("disable");
 						//top.Dialog.progress();
-						gridDeleteCallback(ids,url,gridName);
+						treeGridDeleteCallback(ids,url,gridName);
 					}
 				});
 			}

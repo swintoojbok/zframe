@@ -5,6 +5,9 @@ html {
 body {
 	scrollbar-face-color: #F6F6F6; scrollbar-3dlight-color: #C3C3C3; scrollbar-shadow-color: #B2B2B2; scrollbar-highlight-color: #FFFFFF; scrollbar-darkshadow-color: #F6F6F6; scrollbar-arrow-color: #6688AA; scrollbar-track-color: #EEEEEE;
 }
+.indexHeader{
+	height:57px;background:#f7f7f7;padding-right:10px;text-align: right; background-image: url('images/indexHeader.png');
+}
 .zframe-datagrid-toolbar {
 	padding:5px;
 	line-height:15px;
@@ -14,6 +17,30 @@ body {
 	font: 12px/20px, Arial, sans-serif, Verdana, Tahoma;
 	padding: 0;
 	margin: 0;
+}
+.nav-default{
+	background: none repeat scroll 0 0 #F5F5F5;
+    border-radius: 5px 5px 5px 5px;
+    margin-bottom: 3px;
+    padding: 0 0 0 10px;
+    cursor: pointer;
+    color:#333;
+}
+.nav-hover{
+	background: none repeat scroll 0 0 #e6e6e6;
+    border-radius: 5px 5px 5px 5px;
+    margin-bottom: 3px;
+    padding: 0 0 0 10px;
+    cursor: pointer;
+}
+.nav-selected{
+	background: none repeat scroll 0 0 #0081c2;
+    border-radius: 5px 5px 5px 5px;
+    margin-bottom: 3px;
+    padding: 0 0 0 10px;
+    cursor: pointer;
+    color:#FFFFFF;
+    font-weight: bold;
 }
 .easyui-validatebox{
 	padding:2px 8px 0pt 3px;

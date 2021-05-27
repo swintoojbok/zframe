@@ -38,9 +38,9 @@ public class ExportExcelController{
 	 */
 	@RequestMapping(value="/doExportExcelAll",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public JSONObject doExportExcelAll(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName){
+	public JSONObject doExportExcelAll(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName,boolean ifCompress){
 		JSONObject jResult = new JSONObject();
-		jResult = exportExcelService.executeExportExcelAll(request,entityClass, columns,titles,fileName);
+		jResult = exportExcelService.executeExportExcelAll(request,entityClass, columns,titles,fileName,ifCompress);
 		return jResult;
 	}
 	/**
@@ -53,9 +53,9 @@ public class ExportExcelController{
 	 */
 	@RequestMapping(value="/doExportExcelPage",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public JSONObject doExportExcelPage(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName,int pageNo,int pageSize){
+	public JSONObject doExportExcelPage(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName,boolean ifCompress,int pageNo,int pageSize){
 		JSONObject jResult = new JSONObject();
-		jResult = exportExcelService.executeExportExcelPage(request, entityClass, columns, titles,fileName, pageNo, pageSize);
+		jResult = exportExcelService.executeExportExcelPage(request, entityClass, columns, titles,fileName, ifCompress,pageNo, pageSize);
 		return jResult;
 	}
 	/**
@@ -67,15 +67,19 @@ public class ExportExcelController{
 	 */
 	@RequestMapping(value="/doExportExcelSelected",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public JSONObject doExportExcelSelected(HttpServletRequest request,String entityClass,String[] columns,String titles[],String fileName,Integer[] ids){
+	public JSONObject doExportExcelSelected(HttpServletRequest request,String entityClass,String[] columns,String titles[],String fileName,boolean ifCompress,Integer[] ids){
 		JSONObject jResult = new JSONObject();
-		jResult = exportExcelService.executeExportExcelSelected(request, entityClass, columns, titles,fileName, ids);
+		jResult = exportExcelService.executeExportExcelSelected(request, entityClass, columns, titles,fileName,ifCompress, ids);
 		return jResult;
 	}
 	@RequestMapping("/download")
-	public void download(HttpServletRequest request,HttpServletResponse response,String fileName){
+	public void download(HttpServletRequest request,HttpServletResponse response,String fileName,boolean ifCompress){
 		//生成提示信息
-		response.setContentType("application/vnd.ms-excel");
+		if(ifCompress){
+			response.setContentType("application/zip");
+		}else{
+			response.setContentType("application/vnd.ms-excel");
+		}
 		String codedFileName = null;
 		OutputStream fos = null;
 		FileInputStream fis = null;

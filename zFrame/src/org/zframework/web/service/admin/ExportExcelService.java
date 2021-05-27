@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zframework.core.util.ObjectUtil;
 import org.zframework.core.util.ReflectUtil;
+import org.zframework.core.util.ZipUtil;
 import org.zframework.model.dao.BaseHibernateDao;
 
 /**
@@ -46,7 +47,7 @@ public class ExportExcelService {
 	 * @return
 	 * @throws IOException
 	 */
-	private String exportExcel(HttpServletRequest request,List<?> list,String[] columns,String[] titles,String fileName) throws IOException{
+	private String exportExcel(HttpServletRequest request,List<?> list,String[] columns,String[] titles,String fileName,boolean ifCompress) throws IOException{
 		FileOutputStream fos = null;
 		try{
 			//产生工作簿对象
@@ -104,6 +105,12 @@ public class ExportExcelService {
 			workbook.write(fos);
 			fos.flush();
 			fos.close();
+			if(ifCompress){//判断是否压缩
+				String sourceFile = savePath+"/"+fileName;
+				fileName = fileName.replace(".xls", ".zip");
+				ZipUtil.CompressFile(sourceFile, savePath+"/"+fileName);
+				fExcel.delete();//删除原excel文件
+			}
 			return fileName;
 		}finally{
 			if(ObjectUtil.isNotNull(fos)){
@@ -115,7 +122,7 @@ public class ExportExcelService {
 			}
 		}
 	}
-	public JSONObject executeExportExcelAll(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName){
+	public JSONObject executeExportExcelAll(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName,boolean ifCompress){
 		JSONObject jResult = new JSONObject();
 		try {
 			Class<?> clazz = Class.forName("org.zframework.web.entity."+entityClass);
@@ -125,9 +132,10 @@ public class ExportExcelService {
 				list = baseDao.list(clazz,Restrictions.not(Restrictions.eq("loginName", "superadmin")));
 			else
 				list = baseDao.list(clazz);
-			fileName = exportExcel(request, list, columns, titles,fileName);
+			fileName = exportExcel(request, list, columns, titles,fileName,ifCompress);
 			jResult.element("isExported", true);
 			jResult.element("fileName", fileName);
+			jResult.element("ifCompress", ifCompress);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			jResult.element("isExported", false);
@@ -143,7 +151,7 @@ public class ExportExcelService {
 		}
 		return jResult;
 	}
-	public JSONObject executeExportExcelPage(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName,int pageNo,int pageSize){
+	public JSONObject executeExportExcelPage(HttpServletRequest request,String entityClass,String[] columns,String[] titles,String fileName,boolean ifCompress,int pageNo,int pageSize){
 		JSONObject jResult = new JSONObject();
 		try {
 			Class<?> clazz = Class.forName("org.zframework.web.entity."+entityClass);
@@ -153,9 +161,10 @@ public class ExportExcelService {
 				list = baseDao.list(clazz, pageNo, pageSize, Restrictions.not(Restrictions.eq("loginName", "superadmin")));
 			else
 				list = baseDao.list(clazz, pageNo, pageSize);
-			fileName = exportExcel(request, list, columns, titles,fileName);
+			fileName = exportExcel(request, list, columns, titles,fileName, ifCompress);
 			jResult.element("isExported", true);
 			jResult.element("fileName", fileName);
+			jResult.element("ifCompress", ifCompress);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			jResult.element("isExported", false);
@@ -171,19 +180,20 @@ public class ExportExcelService {
 		}
 		return jResult;
 	}
-	public JSONObject executeExportExcelSelected(HttpServletRequest request,String entityClass,String[] columns,String titles[],String fileName,Integer[] ids){
+	public JSONObject executeExportExcelSelected(HttpServletRequest request,String entityClass,String[] columns,String titles[],String fileName,boolean ifCompress,Integer[] ids){
 		JSONObject jResult = new JSONObject();
 		try {
 			Class<?> clazz = Class.forName("org.zframework.web.entity."+entityClass);
 			List<?> list = new ArrayList<Object>();
 			//屏蔽关键性数据
 			if(entityClass.toLowerCase().equals("user"))
-				list = baseDao.list(clazz,Restrictions.in("id", ids));
-			else
 				list = baseDao.list(clazz, Restrictions.not(Restrictions.eq("loginName", "superadmin")) , Restrictions.in("id", ids));
-			fileName = exportExcel(request, list, columns, titles,fileName);
+			else
+				list = baseDao.list(clazz,Restrictions.in("id", ids));
+			fileName = exportExcel(request, list, columns, titles,fileName ,ifCompress);
 			jResult.element("isExported", true);
 			jResult.element("fileName", fileName);
+			jResult.element("ifCompress", ifCompress);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			jResult.element("isExported", false);

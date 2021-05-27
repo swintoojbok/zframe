@@ -118,6 +118,21 @@ public class ResourceService extends BaseService<Resource>{
 				eqRes.setEnabled(res.getEnabled());
 				
 				update(eqRes);
+				//更新当前用户的资源列表信息
+				List<Resource> resList = user.getResources();
+				int cIdx = -1;
+				for(int i=0;i<resList.size();i++){
+					Resource r = resList.get(i);
+					if(eqRes.getId() == r.getId()){
+						cIdx =i;
+						break;
+					}
+				}
+				if(cIdx != -1){
+					user.getResources().remove(cIdx);
+					user.getResources().add(eqRes);
+				}
+				//记录日志
 				logService.recordInfo("编辑资源","成功", user.getLoginName(), request.getRemoteAddr());
 				jResult.element("isEdited", true);
 			}
