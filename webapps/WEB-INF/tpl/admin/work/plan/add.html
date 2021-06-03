@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>添加计划</title>
+</head>
+ <body>
+ <script type="text/javascript">
+ 	var winPlanAdd = new Windows("win_work_plan_add");
+	var oPlanAdd = {
+		initForm : function(){
+		    winPlanAdd.find("#PlanAddForm").form({
+ 			url:'${basePath}/admin/work/plan/doAdd',
+ 			onSubmit: function(){
+		    	var pass = winPlanAdd.find("#PlanAddForm").form("validate");
+		    	if(pass){
+		    		//判断时间
+		    		var startTime = winPlanAdd.find("#startTime").datebox("getValue");
+		    		var endTime = winPlanAdd.find("#endTime").datebox("getValue");
+		    		if(DateUtil.compareDate(startTime,endTime) == ">"){
+		    			top.Notiy.error("开始时间不能晚于结束时间!");
+		    			return false;
+		    		}
+		    		if(DateUtil.compareDate(endTime, new Date()) == "<"){
+		    			top.Notiy.error("结束时间必须晚于当前时间!");
+		    			return false;
+		    		}
+		    		winPlanAdd.find("#ok").linkbutton("loading");
+		    	}
+		    	return pass; 
+		    },
+		    success:function(data){
+		   		var result = jQuery.parseJSON(data);   
+		        if(result.success){
+		       		top.Notiy.success("计划新增成功!!");
+	        		winPlanAdd.setReturnValue(true);
+					winPlanAdd.close();
+		        }else{
+		        	top.Dialog.alert("错误",result.error,"error");
+		        }
+		        winPlanAdd.find("#ok").linkbutton("reset");
+		    }
+ 		});
+		},
+		initToolbar : function(){
+			winPlanAdd.find("#oneDays").click(function(){
+				oPlanAdd.addDate(1);
+			});
+			winPlanAdd.find("#threeDays").click(function(){
+				oPlanAdd.addDate(3);
+			});
+			winPlanAdd.find("#oneWeek").click(function(){
+				oPlanAdd.addDate(5);
+			});
+		},
+		addDate : function (days){
+			var startTime = winPlanAdd.find("#startTime").datebox("getValue");
+			if(startTime.length == 0){
+				top.Notiy.warning("请先选择开始时间!");
+				return;
+			}
+			var count = 0;
+			var d = DateUtil.parse(startTime);
+			while(count<days){
+				d = DateUtil.addDate(d,1);
+				if(d.getDay() != 0 && d.getDay() != 6){
+					count++;
+				}
+			}
+			winPlanAdd.find("#endTime").datebox("setValue",DateUtil.format(d,"yyyy-MM-dd"));
+		},
+		ok : function(){
+			winPlanAdd.find('#PlanAddForm').submit();
+		},
+		cancel : function(){
+			winPlanAdd.close();
+		}
+	}
+ 	$(function(){
+ 		oPlanAdd.initForm();
+ 		oPlanAdd.initToolbar();
+ 	});
+ </script>
+ <div class="easyui-layout" data-options="fit:true">
+	 <div data-options="region:'center',border:false">
+	 	<form id="PlanAddForm" method="post" style="padding-top:10px;padding-left:20px;">
+	 		<table width="90%" style="line-height: 25px;">
+				<tr>
+					<td width="20%">标题：</td>
+					<td><input id="title" name="title" class="easyui-validatebox" data-options="required:true" type="text" style="width:100%" /></td>
+				</tr>
+				<tr>
+					<td width="20%">开始时间：</td>
+					<td><input id="startTime" name="startTime" class="easyui-datebox" data-options="required:true,width:180" type="text" style="width:100%" value="$!cDate"/></td>
+				</tr>
+				<tr>
+					<td width="20%">结束时间：</td>
+					<td><input id="endTime" name="endTime" class="easyui-datebox" data-options="required:true,width:180" type="text" style="width:100%" />
+						<a id="oneDays" class="easyui-linkbutton" data-options="plain:true">1天</a>
+						<a id="threeDays" class="easyui-linkbutton" data-options="plain:true">3天</a>
+						<a id="oneWeek" class="easyui-linkbutton" data-options="plain:true">1周</a>
+					</td>
+				</tr>
+				<tr>
+					<td width="20%">执行人：</td>
+					<td><input id="executor" name="executor" class="easyui-validatebox" data-options="required:true" type="text" style="width:100%" value="$!cUserName"/></td>
+				</tr>
+				<tr>
+					<td width="20%">详细描述：</td>
+					<td><textarea class="easyui-textarea" name="descript" rows="5" style="width:100%"></textarea></td>
+				</tr>
+			</table>
+		</form>
+	 </div>
+	 <!--Change Button Text-->
+	 <div data-options="region:'south',border:false">
+		<div class="dialog-button">
+			<a id="ok" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)" onclick="oPlanAdd.ok()">确定</a>
+			<a id="cancel" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="oPlanAdd.cancel()">取消</a>
+		</div>
+	</div>
+ </div>
+  </body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>账簿</title>
+	#style
+</head>
+ <body class="easyui-layout">
+ <script type="text/javascript">
+ 	var winIncome;
+ 	var winPay;
+	$(function(){
+	     initDataGrid();
+	     initWindows();
+	     initToolbar();
+	});
+	function initDataGrid(){
+		$("#dgAccountList").datagrid({
+			autoRowHeight: false,
+			collapsible:true,
+			url:"${basePath}/admin/nethsoft/accounting/list",
+			sortName: "id",
+			sortOrder: "asc",
+			remoteSort: true,
+			border:false,
+			fit:true,
+			idField:"id",
+			showFooter:true,
+			columns:[[
+				{title:"日期",field:"datetime",width:100,sortable:true},
+				{title:"摘要",field:"descript",width:300},
+				{title:"借方(收入)",field:"income",width:100,sortable:true,formatter:function(v,r,i){
+					if(v==0){
+						return "";
+					}
+					return v;
+				}},
+				{title:"贷方(支出)",field:"pay",width:100,sortable:true,formatter:function(v,r,i){
+					if(v==0){
+						return "";
+					}
+					return v;
+				},styler:function(v,r,i){
+					return "color:red";
+				}},
+				{title:"余额",field:"balance",width:100,styler:function(v,r,i){
+					if(v<0)
+						return "color:red";
+				}},
+				{title:"备注",field:"comments",width:200}
+			]],
+			pagination:true,
+			rownumbers:true,
+			toolbar:"#dgAccountList-toolbar",
+			onDblClickRow:function(rowindex,rowdata){
+				winFlowEdit.windows({href:"${basePath}/admin/nethsoft/accounting/edit"+rowdata.id});
+				winFlowEdit.open();
+			}
+		});
+	}
+	function initWindows(){
+		winIncome = new Windows("win_accounting_income");
+		winIncome.windows({
+			title:"收入",
+			width:450,
+			height:300,
+			modal:true,
+			cache:false,
+			closed:true,
+			iconCls:"icon-add",
+			href:"${basePath}/admin/nethsoft/accounting/income",
+			onClose:function(){
+				if(winIncome.getReturnValue()=="true"){
+					$("#dgAccountList").datagrid("reload");
+				}
+			}
+		});
+		winPay = new Windows("win_accounting_pay");
+		winPay.windows({
+			title:"支出",
+			width:450,
+			height:300,
+			modal:true,
+			cache:false,
+			closed:true,
+			iconCls:"icon-remove",
+			href:"${basePath}/admin/nethsoft/accounting/pay",
+			onClose:function(){
+				if(winPay.getReturnValue()=="true"){
+					$("#dgAccountList").datagrid("reload");
+				}
+			}
+		});
+	}
+	function initToolbar(){
+		$("#btnIncome").click(function(){
+			winIncome.open();
+		});
+		$("#btnPay").click(function(){
+			winPay.open();
+		});
+	}
+	function doSearch(v,n){
+		doDataGridSearch("dgAccountList",n,v);
+	}
+ </script>
+    <div data-options="region:'center',border:true">
+		<table id="dgAccountList"></table>
+    </div>
+    <!--Tools And ContextMenu-->
+    <div id="dgAccountList-toolbar" style="padding:2px 0;" class="datagrid-toolbar">
+		<table cellpadding="0" cellspacing="0" style="width:100%">
+			<tr>
+				<td style="padding-left:2px">
+					<a id="btnIncome" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" style="float: left;">收入</a>
+					<a id="btnPay" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" style="float: left;">支出</a>
+				</td>
+				<td style="text-align:right;padding-right:2px">
+					<input id="ss" style="width:240px;" class="easyui-searchbox" data-options="searcher:doSearch,prompt:'请输入查询内容',menu:'#ss_mm'"></input>
+					<div id="ss_mm" style="width:80px;">
+						<div data-options="name:'datetime'">日期</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+  </body>
+</html>
