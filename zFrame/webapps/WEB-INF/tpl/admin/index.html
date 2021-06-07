@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>系统首页</title>
+	#style
+	<script type="text/javascript" src="$!basePath/framework/js/common/zframe.index.js"></script>
+	<script type="text/javascript" src="$!basePath/framework/js/common/zframe.cookie.js"></script>
+	<style type="text/css">
+		ul{list-style-type:none;margin:0px; padding:5px;}
+		ul li{ padding:0px;}
+		ul li a{line-height:24px;padding-left:25px;padding-top:2px;color:#333;vertical-align: middle !important;}
+		a:link {
+		 text-decoration: none;
+		}
+		a:visited {
+		 text-decoration: none;
+		}
+		a:hover {
+		 text-decoration: none;
+		}
+		a:active {
+		 text-decoration: none;
+		}
+		#mainLayout_header a{
+			color:white;
+		}
+		#mainLayout_header span{
+			color:white;
+		}
+		.headertitle{
+			color:white;
+			float:left;
+			padding:10px;
+			padding-top:20px;
+		}
+	</style>
+</head>
+<body class="easyui-layout">
+	<div id="mainLayout_header" data-options="region:'north',border:false" class="indexHeader">
+		<div class="headertitle">
+			<!-- <img src="$!basePath/framework/images/headTitle.png" /> -->
+		</div>
+		<input type="hidden" id="basePath" value="$!basePath"/>
+		<span style="padding-right:5px;">当前用户:<span style="font-weight: bold;">$!UserName</span></span>
+		<a id="btnToDesktop" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-home',plain:true" onclick="window.location.href='$!basePath/admin/desktop'">桌面版</a>
+		<a id="btnBackHome" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-home',plain:true" onclick="backHome()">返回桌面</a>
+		<a id="btnThemes" href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#themeList',iconCls:'icon-themes'">更换皮肤</a>  
+		<div id="themeList" style="width:90px;" data-options="onClick:changeThemes">
+		    <div data-options="iconCls:'icon-ok'" themeName="default">默认皮肤</div>  
+		    <div data-options="" themeName="blue">Blue</div>
+		    <div data-options="" themeName="cupertino">Cupertino</div>
+		    <div data-options="" themeName="metro-blue">Metro-Blue</div>
+		    <div data-options="" themeName="metro-gray">Metro-Bray</div>
+		    <div data-options="" themeName="metro-green">Metro-Green</div>
+		    <div data-options="" themeName="metro-orange">Metro-Orange</div>
+		    <div data-options="" themeName="metro-red">Metro-Red</div>
+		</div>
+		<a id="btnRemove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-exit',plain:true" onclick="exit()" style="margin-top:5px;">退出系统</a>
+	</div>
+	<div data-options="region:'west',split:true,title:'功能菜单'" style="width:200px;">
+		<div id="navMenu" class="easyui-accordion" data-options="fit:true,border:true">
+				#foreach($res in $firstRes)
+					<div title="$!res.name" data-options="selected:true,iconCls:'$!res.icon'" style="padding:5px;overflow:auto;">
+						<ul style="margin: 0;padding: 0;">
+							#foreach($childRes in $!resMap.get($!res.id))
+							<li class="nav-default" onmouseover="navHover(this)" onmouseout="navOut(this)"><a href="javascript:void(0)" src="$!{basePath}$!childRes.url" class="$!childRes.icon">$!childRes.name</a></li>
+							#end
+						</ul>
+					</div>
+				#end
+		</div>
+	</div>
+	<div data-options="region:'south',border:false" style="height:20px;background:#f7f7f7;text-align: center;">Copyright 2012-2013</div>
+	<div id="centerDiv" data-options="region:'center',title:'首页',tools:'#tt',iconCls:'icon-home'" style="padding:0px;margin: 0px;">
+		<div id="divFrame" class="easyui-panel" data-options="border:false,fit:true">
+			<iframe id="frameContent" src="about:blank" frameborder="0" width="100%" scrolling="auto" marginheight="0" marginwidth="0" frameSpacing="0"></iframe>
+		</div>
+	</div>
+	<div id="tt">
+		<a href="javascript:void(0)" id="frameReload" class="icon-reload" onclick="reload();"></a>
+	</div>
+	<!-- 打开窗口存放的位置，不可删除 -->
+	<div id="FrameWorkWindows"></div>
+</body>
+</html>

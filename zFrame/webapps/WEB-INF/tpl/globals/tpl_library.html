@@ -1,0 +1,79 @@
+<!-- 分页条 -->
+#macro (pagination)
+#end
+<!-- 分页条End -->
+<!-- 页面验证模板 -->
+#macro( getErrorCode $objectName $field)
+	#set($errors = $springMacroRequestContext.getErrors($objectName))
+	#if($errors && $errors.fieldErrors && $errors.fieldErrors.size()>0)
+		#foreach($e in $errors.fieldErrors)
+			#if("$!field"=="$e.field")
+				$e.code
+			#end
+		#end
+	#end
+#end
+<!-- 页面验证模板End -->
+#macro( style)
+<link id="mainStyle" href="$!basePath/framework/css/easyui/$!theme/easyui.css" rel="stylesheet" type="text/css"/>
+<link href="$!basePath/framework/css/easyui/icon.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="$!basePath/framework/js/common/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/zframe.ui.min.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/zframe.ui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/zframe.common.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/zframe.validate.js"></script>
+<!--上传模块-->
+<link href="$!basePath/framework/css/uploadify.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="$!basePath/framework/js/common/jquery.uploadify.js"></script>
+<!-- cookie模块 -->
+<script type="text/javascript" src="$!basePath/framework/js/common/zframe.cookie.js"></script>
+<!-- 扩展插件 -->
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.windows.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.dialog.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.notiy.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.json.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.datagrid.util.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.treegrid.util.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/config/config-default.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/core/plugin/zframe.button.prrmissioned.js"></script>
+$!ButtonPrrmission
+#end
+#macro( juiStyle)
+<link href="$!basePath/framework/css/aristo/base.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="$!basePath/framework/js/common/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/common/jquery-ui-1.9.0.min.js"></script>
+#end
+#macro( tipStyle)
+<link href="$!basePath/framework/css/tip/tip-yellow/style.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="$!basePath/framework/js/common/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="$!basePath/framework/js/common/jquery.poshytip.js"></script>
+#end
+#macro( setSelectValue $win $name $value)
+<script type="text/javascript">
+	var win = new Windows("$win");
+	var oSelect = win.find("select[name='$name']");
+	try{
+		oSelect.val("$value");
+	}catch(e){
+		top.Dialog.alert("错误","脚本错误:"+e,"error");
+	}
+</script>
+#end
+#macro( setRadioValue $win $name $value)
+<script type="text/javascript">
+	var win = new Windows("$win");
+	var oRadio = win.find("input[type='radio'][name='$name'][value='$value']");
+	try{
+		oRadio.attr("checked","checked");
+	}catch(e){
+		top.Dialog.alert("错误","脚本错误:"+e,"error");
+	}
+</script>
+#end
+#macro( substring $value $len)
+	#if($value.length()<=$len)
+		$value
+	#else
+		$value.substring(0,$len)...
+	#end
+#end

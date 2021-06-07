@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>res_edit.html</title>
+</head>
+ <body>
+ <script type="text/javascript">
+ 	var winCommEdit = new Windows("comm_edit");
+ 	var err=winCommEdit.find("#error").val();
+ 	if(err){
+ 		top.Notiy.success("系统数据不能修改!");
+		winCommEdit.setReturnValue(true);
+		winCommEdit.close();
+ 	}
+ 	$(function(){
+ 		winCommEdit.find("#commForm").form({
+ 				url:'$!basePath/admin/datadict/doEdit',
+ 				onSubmit: function(){
+			    	var pass = winCommEdit.find('#commForm').form("validate");
+			    	if(pass){
+			    		winCommEdit.find("#ok").linkbutton("disable");
+			    	}
+			    	return pass; 
+			    },   
+			    success:function(data){
+			   		
+			   		var result = jQuery.parseJSON(data);
+			   		
+			   		if(result.isEdited){
+			        	top.Notiy.success("修改成功!");
+			        	winCommEdit.setReturnValue(true);
+						winCommEdit.close();
+			        }else if(result.NoChanges){
+			        	top.Notiy.info("您未做任何修改!");
+			        	winCommEdit.setReturnValue(true);
+						winCommEdit.close();			        	
+			        }else{
+			        	top.Dialog.alert("错误",result.error,"error");
+			        }
+
+			        winCommEdit.find("#ok").linkbutton("enable");
+			    }
+ 			});
+ 	});
+	function ok(){
+	 
+  		winCommEdit.find('#commForm').submit();
+  	}
+  	function cancel(){
+  		winCommEdit.close();
+  	}
+ </script>
+ <div class="easyui-layout" data-options="fit:true">
+	 <div data-options="region:'center',border:false" style="background:#fff;">
+	 	<form id="commForm" method="post" style="padding-top:10px;padding-left: 20px;">
+	 	<input type="hidden" name="id" value="$!common.id"/>
+	 	<input type="hidden" id="error" value="$!error"/>
+	 		<table width="90%" >
+					<tr>
+						<td>标识：</td>
+						<td><input type="text" class="easyui-validatebox" name="key"
+							maxlength="50" data-options="required:true" style="width: 180px;" value="$!common.key" /></td>
+					</tr>
+					<tr>
+						<td>&nbsp;&nbsp;值：</td>
+						<td><input type="text" class="easyui-validatebox" name="value"
+							maxlength="50" data-options="required:true" style="width: 180px;" value="$!common.value" /></td>
+					</tr>
+						<tr>
+						<td>类型：</td>
+						<td colspan="3">
+							<select class="easyui-combobox" name="type" data-options="editable:false,width:173">
+								<option value="1">系统数据</option>
+								<option value="2">关键数据</option>
+								#if($!common.type == 3)
+									<option value="3">常规数据</option>
+								#end
+							</select>
+							#setSelectValue("comm_edit","type","$!common.type")
+						</td>
+					</tr>
+					<tr>
+						<td>说明：</td>
+						<td><textarea rows="3" cols="21" name="descrip">$!common.descrip</textarea>
+						</td>
+					</tr>
+					
+				</table>
+		</form>
+	 </div>
+	 <!--Change Button Text-->
+	 <div data-options="region:'south',border:false" style="text-align:center;padding:5px 0;">
+		<a id="ok" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)" onclick="ok()">确定</a>
+		<a id="cancel" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="cancel()">取消</a>
+	</div>
+ </div>
+  </body>
+</html>
